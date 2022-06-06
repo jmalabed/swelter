@@ -1,16 +1,13 @@
 const puppeteer = require("puppeteer");
 const dayjs = require("dayjs");
 const axios = require("axios");
-
+require("dotenv").config();
 dayjs().format();
 
-const API_KEY = process.env.API_KEY;
-const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
-const BASE_URL = process.env.BASE_URL;
-
-class Scraper {
-  constructor(url, selectors) {
+class Buoy {
+  constructor(name, url, selectors) {
     this.url = url;
+    this.name = name;
     this.selectors = selectors;
     this.timeout = 1;
     this.values = null;
@@ -45,29 +42,37 @@ class Scraper {
     await browser.close();
   }
 
-  async alert() {
+  async alert(message) {
     // not implemented !
-    const configs = {
-      url: "https://onesignal.com/api/v1/notifications",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Basic ${API_KEY}`,
-      },
-      body: {
-        app_id: ONESIGNAL_APP_ID,
+    try {
+      const data = JSON.stringify({
+        app_id: `${process.env.ONESIGNAL_APP_ID}`,
         included_segments: ["Subscribed Users"],
-        data: {
-          foo: "bar",
+        headings: {
+          en: `Swelter:Buoy '${this.name}'`,
         },
         contents: {
-          en: "Sample push notification",
+          en: `${message}`,
         },
-      },
-    };
-    const alert = await axios(configs);
-    console.log(alert);
+      });
+
+      const config = {
+        method: "post",
+        url: `${process.env.BASE_URL}/notifications`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${process.env.API_KEY}`,
+        },
+        data: data,
+      };
+
+      const notification = await axios(config);
+      const parsedNotification = await JSON.stringify(notification.data);
+      this.setLastNotification();
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 
-module.exports = Scraper;
+module.exports = Buoy;
