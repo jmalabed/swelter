@@ -4,6 +4,10 @@ const axios = require("axios");
 
 dayjs().format();
 
+const API_KEY = process.env.API_KEY;
+const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
+const BASE_URL = process.env.BASE_URL;
+
 class Scraper {
   constructor(url, selectors) {
     this.url = url;
@@ -41,8 +45,28 @@ class Scraper {
     await browser.close();
   }
 
-  alert() {
+  async alert() {
     // not implemented !
+    const configs = {
+      url: "https://onesignal.com/api/v1/notifications",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${API_KEY}`,
+      },
+      body: {
+        app_id: ONESIGNAL_APP_ID,
+        included_segments: ["Subscribed Users"],
+        data: {
+          foo: "bar",
+        },
+        contents: {
+          en: "Sample push notification",
+        },
+      },
+    };
+    const alert = await axios(configs);
+    console.log(alert);
   }
 }
 

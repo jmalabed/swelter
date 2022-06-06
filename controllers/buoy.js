@@ -11,19 +11,21 @@ const firstBuoy = new Scraper(
     "#data > table:nth-child(4) > tbody > tr:nth-child(4) > td:nth-child(8)",
   ]
 );
-// setInterval(
-//   (async () => {
-//     // every 30 mins, scrape the buoy and read the data.
-//     // if data is >15 DPD && the last notification sent was over 2 hours ago && the time window is satisfied
-//     // send push notification to subscribers of the buoy
-//     await firstBuoy.scrapeBuoy();
-//
-//     if (firstBuoy.values.filter((val) => val>15).length > 1) {
-//       if (firstBuoy.lastNotification.fromNow())
-//       firstBuoy.alert();
-//     }
-//   })(),
-//   firstBuoy.cooldown
-// );
-const date1 = dayjs().subtract(1, "hour");
-console.log(date1.isBefore(dayjs()));
+setInterval(
+  (async () => {
+    // every 30 mins, scrape the buoy and read the data.
+    // if data is >15 DPD && the last notification sent was over 2 hours ago && the time window is satisfied
+    // send push notification to subscribers of the buoy
+    await firstBuoy.scrapeBuoy();
+
+    if (firstBuoy.values.filter((val) => val > 15).length > 1) {
+      if (
+        firstBuoy.lastNotification.isBefore(
+          dayjs().subtract(firstBuoy.cooldown, "hour")
+        )
+      ) {
+        firstBuoy.alert();
+      }
+    }
+  })()
+);
