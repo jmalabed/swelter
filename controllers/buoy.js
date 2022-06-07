@@ -12,8 +12,12 @@ const firstBuoy = new Buoy(
     "#data > table:nth-child(4) > tbody > tr:nth-child(4) > td:nth-child(8)",
   ]
 );
-console.log("hi");
-firstBuoy.alert("Kinky", "last one");
+
+firstBuoy.alert(
+  "Harvest",
+  "The wave DPD has been over 15 for the past two readings!"
+);
+
 // setInterval(
 //   (async () => {
 //     // every 30 mins, scrape the buoy and read the data.
@@ -27,7 +31,7 @@ firstBuoy.alert("Kinky", "last one");
 //           dayjs().subtract(firstBuoy.cooldown, "hour")
 //         )
 //       ) {
-//         firstBuoy.alert();
+//         firstBuoy.alert("Harvest", "It's FIRING!!");
 //       }
 //     }
 //   })(),

@@ -1,6 +1,7 @@
 const puppeteer = require("puppeteer");
 const dayjs = require("dayjs");
 const axios = require("axios");
+
 require("dotenv").config();
 dayjs().format();
 
@@ -13,7 +14,7 @@ class Buoy {
     this.values = null;
     this.timestamp = null;
     this.lastNotification = dayjs();
-    this.cooldown = 4; // hours;
+    this.cooldown = 2; // hours;
   }
 
   setTimestamp() {
