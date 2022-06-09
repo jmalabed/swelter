@@ -58,6 +58,9 @@ setInterval(async () => {
 // Middleware
 
 // Routes
+app.get("/", (req, res, next) => {
+  res.send("Welcome to the swelter back-end");
+});
 // Listen
 
 app.listen(PORT, () => {
