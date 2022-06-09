@@ -28,7 +28,7 @@ class Buoy {
   async scrapeBuoy() {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    await page.goto(this.url, { timeout: 10000 });
+    await page.goto(this.url, { timeout: 20000 });
     let newVals = [];
     for (let i = 0; i < this.selectors.length; i++) {
       const selector = await page.waitForSelector(this.selectors[i]);
