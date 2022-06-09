@@ -18,7 +18,7 @@ const firstBuoy = new Buoy(
     "#data > table:nth-child(4) > tbody > tr:nth-child(4) > td:nth-child(8)",
   ]
 );
-
+firstBuoy.alert("testing cloud server!");
 setInterval(async () => {
   // every 30 mins, scrape the buoy and read the data.
   // if data is >15 DPD && the last notification sent was over 2 hours ago && the time window is satisfied
