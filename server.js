@@ -5,6 +5,8 @@ const PORT = process.env.PORT || 9000;
 const cors = require("cors");
 const Buoy = require("./buoy.js");
 const dayjs = require("dayjs");
+const mongoose = require("mongoose");
+const methodOverride = require("method-override");
 dayjs().format();
 
 // Cors
@@ -21,7 +23,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
+app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 // Harvest Buoy Monitoring
 const firstBuoy = new Buoy(
   "Harvest",
@@ -32,34 +35,29 @@ const firstBuoy = new Buoy(
   ]
 );
 
-setInterval(
-  (async () => {
-    // every 30 mins, scrape the buoy and read the data.
-    // if data is >15 DPD && the last notification sent was over 2 hours ago && the time window is satisfied
-    // send push notification to subscribers of the buoy
-    await firstBuoy.scrapeBuoy();
-
-    if (firstBuoy.values.filter((val) => val > 15).length > 1) {
-      if (
-        firstBuoy.lastNotification.isBefore(
-          dayjs().subtract(firstBuoy.cooldown, "hour")
-        )
-      ) {
-        firstBuoy.alert("It's FIRING!!");
-      }
+setInterval(async () => {
+  // every 30 mins, scrape the buoy and read the data.
+  // if data is >15 DPD && the last notification sent was over 2 hours ago && the time window is satisfied
+  // send push notification to subscribers of the buoy
+  console.log("pre-scrape");
+  await firstBuoy.scrapeBuoy();
+  console.log("post-scrape");
+  if (firstBuoy.values.filter((val) => val > 15).length > 1) {
+    if (
+      firstBuoy.lastNotification.isBefore(
+        dayjs().subtract(firstBuoy.cooldown, "hour")
+      )
+    ) {
+      firstBuoy.alert("It's FIRING!!");
     }
-  })(),
-  30 * 60 * 1000
-);
-
-// Controllers
+  } else {
+    console.log("checked, no notifications");
+  }
+}, 30 * 60 * 1000);
 
 // Middleware
 
 // Routes
-app.get("/", async (req, res, next) => {
-  res.send("Welcome to swelter back end");
-});
 // Listen
 
 app.listen(PORT, () => {
